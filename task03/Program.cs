@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace task03
 {
@@ -6,17 +7,48 @@ namespace task03
     {
         private static void Main()
         {
-            /*
-             *  Требуется: Описать структуру с именем Price, содержащую следующие поля:
-                • название товара;
-                • название магазина, в котором продается товар;
-                • стоимость товара в гривнах.
-                Написать программу, выполняющую следующие действия:
-                • ввод с клавиатуры данных в массив, состоящий из двух элементов типа Price (записи должны
-                быть упорядочены в алфавитном порядке по названиям магазинов);
-                • вывод на экран информации о товарах, продающихся в магазине, название которого введено с
-                клавиатуры (если такого магазина нет, вывести исключение).
-             */
+            var prices = new Price[] { };
+            for (var i = 0; i < 2; i++)
+            {
+                var price = new Price();
+                Console.WriteLine("Price {0}:", i + 1);
+                Console.WriteLine("Product name: ");
+                price.ProductName = Console.ReadLine();
+                Console.WriteLine("Shop name: ");
+                price.ShopName = Console.ReadLine();
+                try
+                {
+                    Console.WriteLine("Product price: ");
+                    price.ProductPrice = Double.Parse(Console.ReadLine() ?? throw new InvalidOperationException());
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+
+                Array.Resize(ref prices, prices.Length + 1);
+                prices[^1] = price;
+            }
+
+            prices = prices.OrderBy(i => i.ShopName).ToArray();
+
+            Console.WriteLine("Search by shop name:");
+            var searchShopName = Console.ReadLine();
+            var shopCounter = 0;
+            foreach (var item in prices)
+            {
+                if (item.ShopName == searchShopName)
+                {
+                    shopCounter++;
+                    Console.WriteLine("{0}:{1}", item.ProductName, item.ProductPrice);
+                }
+            }
+
+            if (shopCounter == 0)
+            {
+                throw new Exception("Shop or price where not found");
+            }
         }
     }
 }
